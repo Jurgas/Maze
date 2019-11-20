@@ -1,22 +1,43 @@
 package Core;
 
+import Core.InputOutput.Reader;
 import Core.Square.*;
 
-import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
+
+import static Core.InputOutput.Writer.writeToFile;
+
 
 public class Maze {
 
     private SquareInterface[][] maze;                   //maze [szerokosc][wysokosc]
 
-    private void generateMaze(int width, int height) {
+    public int getHeight() {
+        return this.maze[0].length;
+    }
 
-        int mazeWidth = width * 2 + 1;
-        int mazeHeight = height * 2 + 1;
-        maze = new SquareInterface[mazeWidth][mazeHeight];
-        for (int i = 0; i < mazeHeight; i++) {
-            for (int j = 0; j < mazeWidth; j++) {
-                if (i == 0 || i == mazeHeight - 1 || j == 0 || j == mazeWidth - 1)
+    public int getWidth() {
+        return this.maze.length;
+    }
+
+    public void setSquareAtIndex(int w, int h, SquareInterface square) {
+        maze[w][h] = square;
+    }
+
+    public SquareInterface[][] getMaze() {
+        return maze;
+    }
+
+    public void generateEmptyMaze(int width, int height) {
+        maze = new SquareInterface[width][height];
+    }
+
+    private void generateMaze(int width, int height) {
+        generateEmptyMaze(width * 2 + 1, height * 2 + 1);
+        for (int i = 0; i < getHeight(); i++) {
+            for (int j = 0; j < getWidth(); j++) {
+                if (i == 0 || i == getHeight() - 1 || j == 0 || j == getWidth() - 1)
                     maze[j][i] = new Wall();
                 else
                     maze[j][i] = new Path();
@@ -24,18 +45,11 @@ public class Maze {
         }
 
         makeEntrances(width, height);
-        divide(1, mazeWidth - 2, 1, mazeHeight - 2);
-
-        for (int i = 0; i < height * 2 + 1; i++) {
-            for (int j = 0; j < width * 2 + 1; j++) {
-                System.out.print(maze[j][i]);
-            }
-            System.out.println(" ");
-        }
+        divide(1, getWidth() - 2, 1, getHeight() - 2);
     }
 
+
     private void divide(int startWidth, int endWidth, int startHeight, int endHeight) {
-        System.out.println(startWidth + " " + endWidth + " " + startHeight + " " + endHeight);
         Random r;
         int x, y;
         boolean z = false;
@@ -50,7 +64,7 @@ public class Maze {
                 y = r.nextInt(h) * 2 + 1;
                 for (int i = startHeight; i <= endHeight; i++)
                     maze[x + startWidth - 1][i] = new Wall();
-                maze[x + startWidth - 1][y + startHeight -1] = new Path();
+                maze[x + startWidth - 1][y + startHeight - 1] = new Path();
                 divide(startWidth, startWidth - 1 + x - 1, startHeight, endHeight);
                 divide(startWidth - 1 + x + 1, endWidth, startHeight, endHeight);
             } else {
@@ -59,14 +73,14 @@ public class Maze {
                 for (int i = startWidth; i <= endWidth; i++)
                     maze[i][x + startHeight - 1] = new Wall();
                 maze[y + startWidth - 1][x + startHeight - 1] = new Path();
-                divide(startWidth, endWidth, startHeight, startHeight -1 + x - 1);
-                divide(startWidth, endWidth, startHeight -1 + x + 1, endHeight);
+                divide(startWidth, endWidth, startHeight, startHeight - 1 + x - 1);
+                divide(startWidth, endWidth, startHeight - 1 + x + 1, endHeight);
             }
         }
     }
 
     private void makeEntrances(int width, int height) {
-        Random r = new Random();
+        Random r = new Random(1);
         int x;
         int y;
         boolean a = r.nextBoolean();
@@ -97,8 +111,27 @@ public class Maze {
 
     public static void main(String[] args) {
         Maze m = new Maze();
-        m.generateMaze(20, 20);
+        Reader r = new Reader();
 
 
+        for (String arg : args) {
+            if (arg.equals("-r")) {
+                r.readFile(args, m);
+            } else {
+                Scanner s = new Scanner(System.in);
+                // TODO program without read file
+            }
+
+            if (arg.equals("-w")) {
+                writeToFile(args, m);
+            }
+        }
+        for (int i = 0; i < m.getHeight(); i++) {
+            for (int j = 0; j < m.getWidth(); j++)
+                System.out.print(m.getMaze()[j][i]);
+            if (i + 1 != m.getHeight())
+                System.out.println();
+        }
     }
 }
+
