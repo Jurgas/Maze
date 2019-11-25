@@ -1,6 +1,7 @@
 package Core;
 
 import Core.InputOutput.Reader;
+import Core.SolvingAlgorithms.BFSAlgorithm;
 import Core.Square.*;
 
 import java.util.Random;
@@ -11,7 +12,7 @@ import static Core.InputOutput.Writer.writeToFile;
 
 public class Maze {
 
-    private SquareInterface[][] maze;                   //maze [szerokosc][wysokosc]
+    private SquareInterface[][] maze;                   //maze [width][height]
 
     public int getHeight() {
         return this.maze[0].length;
@@ -33,7 +34,7 @@ public class Maze {
         maze = new SquareInterface[width][height];
     }
 
-    private void generateMaze(int width, int height) {
+    public void generateMaze(int width, int height) {
         generateEmptyMaze(width * 2 + 1, height * 2 + 1);
         for (int i = 0; i < getHeight(); i++) {
             for (int j = 0; j < getWidth(); j++) {
@@ -132,6 +133,9 @@ public class Maze {
             if (i + 1 != m.getHeight())
                 System.out.println();
         }
+
+        BFSAlgorithm b = new BFSAlgorithm();
+        b.solveBFS(m.getMaze());
     }
 }
 
