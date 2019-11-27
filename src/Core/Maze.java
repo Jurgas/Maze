@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class Maze {
 
-    private SquareInterface[][] maze;                   //maze [width][height]
+    private Square[][] maze;                   //maze [width][height]
 
     public int getHeight() {
         return this.maze[0].length;
@@ -17,16 +17,16 @@ public class Maze {
         return this.maze.length;
     }
 
-    public void setSquareAtIndex(int w, int h, SquareInterface square) {
+    public void setSquareAtIndex(int w, int h, Square square) {
         maze[w][h] = square;
     }
 
-    public SquareInterface[][] getMaze() {
+    public Square[][] getMaze() {
         return maze;
     }
 
     public void generateEmptyMaze(int width, int height) {
-        maze = new SquareInterface[width][height];
+        maze = new Square[width][height];
     }
 
     public void generateMaze(int width, int height) {

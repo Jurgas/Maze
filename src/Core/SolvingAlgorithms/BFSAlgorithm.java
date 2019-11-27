@@ -3,7 +3,7 @@ package Core.SolvingAlgorithms;
 import Core.Square.Entrance;
 import Core.Square.Exit;
 import Core.Square.Path;
-import Core.Square.SquareInterface;
+import Core.Square.Square;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -15,8 +15,10 @@ public class BFSAlgorithm {
     private Queue<Node> queue = new LinkedList<>();
     private List<Node> nodeList = new ArrayList<>();
 
-    public void solveBFS(SquareInterface[][] maze) {
+    public void solveBFS(Square[][] maze) {
         makeList(maze);
+        makeConnections(maze);
+        setEntranceExit(maze);
         Node exit = queue.element();
         boolean solve = false;
         if (queue.element().isExit)
@@ -42,7 +44,6 @@ public class BFSAlgorithm {
                 System.out.print("-> ");
             }
         }
-
     }
 
     private void addToQueue(Node n) {
@@ -64,7 +65,7 @@ public class BFSAlgorithm {
         }
     }
 
-    private void makeList(SquareInterface[][] maze) {
+    private void makeList(Square[][] maze) {
         int height = maze[0].length;
         int width = maze.length;
 
@@ -75,11 +76,12 @@ public class BFSAlgorithm {
                 nodeList.add(n);
             }
         }
-        makeConnections(maze, width, height);
-        setEntranceExit(maze, width, height);
+
     }
 
-    private void makeConnections(SquareInterface[][] maze, int width, int height) {
+    private void makeConnections(Square[][] maze) {
+        int height = maze[0].length;
+        int width = maze.length;
         int w = (width - 1) / 2;
         int numNode = 0;
         for (int i = 1; i < height; i = i + 2) {
@@ -99,14 +101,16 @@ public class BFSAlgorithm {
 
     }
 
-    private void setEntranceExit(SquareInterface[][] maze, int width, int height) {
+    private void setEntranceExit(Square[][] maze) {
+        int height = maze[0].length;
+        int width = maze.length;
         checkHorizontal(maze, width, 0);
         checkHorizontal(maze, width, height - 1);
         checkVertical(maze, width, height, 0);
         checkVertical(maze, width, height, width - 1);
     }
 
-    private void checkHorizontal(SquareInterface[][] maze, int width, int i) {
+    private void checkHorizontal(Square[][] maze, int width, int i) {
         int w = (width - 1) / 2;
         for (int j = 1; j < width; j = j + 2) {
             if (maze[j][i] instanceof Entrance) {
@@ -118,7 +122,7 @@ public class BFSAlgorithm {
         }
     }
 
-    private void checkVertical(SquareInterface[][] maze, int width, int height, int j) {
+    private void checkVertical(Square[][] maze, int width, int height, int j) {
         int x;
         if (j == 0)
             x = 0;
@@ -147,7 +151,5 @@ public class BFSAlgorithm {
         Node(int number) {
             this.number = number;
         }
-
-
     }
 }

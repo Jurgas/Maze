@@ -1,6 +1,6 @@
 package Core.Square;
 
-public class Exit implements SquareInterface {
+public class Exit implements Square {
     @Override
     public String toString() {
         return "*";

@@ -43,10 +43,10 @@ public class CommandLineMain {
             m.generateMaze(w, h);
             s.close();
         }
+
         for (int i = 0; i < m.getHeight(); i++) {
             for (int j = 0; j < m.getWidth(); j++)
                 System.out.print(m.getMaze()[j][i]);
-            if (i + 1 != m.getHeight())
                 System.out.println();
         }
 
