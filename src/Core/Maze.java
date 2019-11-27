@@ -1,13 +1,8 @@
 package Core;
 
-import Core.InputOutput.Reader;
-import Core.SolvingAlgorithms.BFSAlgorithm;
 import Core.Square.*;
 
 import java.util.Random;
-import java.util.Scanner;
-
-import static Core.InputOutput.Writer.writeToFile;
 
 
 public class Maze {
@@ -107,35 +102,6 @@ public class Maze {
                 maze[width * 2][y] = new Entrance();
             }
         }
-    }
-
-
-    public static void main(String[] args) {
-        Maze m = new Maze();
-        Reader r = new Reader();
-
-
-        for (String arg : args) {
-            if (arg.equals("-r")) {
-                r.readFile(args, m);
-            } else {
-                Scanner s = new Scanner(System.in);
-                // TODO program without read file
-            }
-
-            if (arg.equals("-w")) {
-                writeToFile(args, m);
-            }
-        }
-        for (int i = 0; i < m.getHeight(); i++) {
-            for (int j = 0; j < m.getWidth(); j++)
-                System.out.print(m.getMaze()[j][i]);
-            if (i + 1 != m.getHeight())
-                System.out.println();
-        }
-
-        BFSAlgorithm b = new BFSAlgorithm();
-        b.solveBFS(m.getMaze());
     }
 }
 
