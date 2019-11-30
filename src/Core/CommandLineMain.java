@@ -4,6 +4,7 @@ import Core.InputOutput.ArgsChooser;
 import Core.InputOutput.FileNotGivenException;
 import Core.InputOutput.Reader;
 import Core.SolvingAlgorithms.BFSAlgorithm;
+import Core.SolvingAlgorithms.TremauxAlgorithm;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,13 +19,16 @@ public class CommandLineMain {
         ArgsChooser ac = new ArgsChooser();
         File f;
 
-        if (args.length != 0)
+        boolean read = false;
+
+        if (args.length != 0) {
             for (String arg : args) {
                 if (arg.equals("-r")) {
                     try {
                         f = ac.fileChooser(args, "-r");
                         try {
                             r.readFile(m, f);
+                            read = true;
                         } catch (IOException e) {
                             System.out.println("Nie znaleziono podanego pliku: " + f.getAbsolutePath());
                             System.exit(-2);
@@ -35,7 +39,8 @@ public class CommandLineMain {
                     }
                 }
             }
-        else {
+        }
+        if (!read) {
             Scanner s = new Scanner(System.in);
             System.out.println("Wpisz rozmiary labiryntu (szerokość wysokość) który chcesz wygenerować.");
             int w = s.nextInt();
@@ -52,12 +57,14 @@ public class CommandLineMain {
 
         BFSAlgorithm b = new BFSAlgorithm();
         b.solveBFS(m.getMaze());
+        TremauxAlgorithm t = new TremauxAlgorithm("solveTremaux.txt");
+        t.solveTremaux(m.getMaze());
 
         for (String arg : args) {
             if (arg.equals("-w")) {
                 try {
                     f = ac.fileChooser(args, "-w");
-                    writeToFile(m, f);
+                    writeToFile(m.getMaze(), f);
                 } catch (FileNotGivenException e) {
                     System.out.println(e.getMessage());
                 }
