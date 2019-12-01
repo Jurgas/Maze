@@ -42,23 +42,29 @@ public class CommandLineMain {
         }
         if (!read) {
             Scanner s = new Scanner(System.in);
-            System.out.println("Wpisz rozmiary labiryntu (szerokość wysokość) który chcesz wygenerować.");
+            System.out.println("Wpisz rozmiary labiryntu (szerokość wysokość), który chcesz wygenerować.");
             int w = s.nextInt();
             int h = s.nextInt();
             m.generateMaze(w, h);
             s.close();
         }
 
+        System.out.println("---Labirynt---");
         for (int i = 0; i < m.getHeight(); i++) {
             for (int j = 0; j < m.getWidth(); j++)
                 System.out.print(m.getMaze()[j][i]);
                 System.out.println();
         }
 
-        BFSAlgorithm b = new BFSAlgorithm();
+        System.out.println("\nRozwiązanie algorytmem BFS: ");
+        BFSAlgorithm b = new BFSAlgorithm(true);
         b.solveBFS(m.getMaze());
-        TremauxAlgorithm t = new TremauxAlgorithm("solveTremaux.txt");
+
+        String tremaux = "solveTremaux.txt";
+        System.out.println("\nRozwiązanie algorytmem Tremaux zapisane do pliku: " + tremaux);
+        TremauxAlgorithm t = new TremauxAlgorithm(tremaux);
         t.solveTremaux(m.getMaze());
+        System.out.println("Ścieżka oznaczona jest znakami 'x'");
 
         for (String arg : args) {
             if (arg.equals("-w")) {

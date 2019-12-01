@@ -14,6 +14,14 @@ public class BFSAlgorithm {
 
     private Queue<Node> queue = new LinkedList<>();
     private List<Node> nodeList = new ArrayList<>();
+    private boolean print;
+
+    public BFSAlgorithm() {
+    }
+
+    public BFSAlgorithm(boolean print) {
+        this.print = print;
+    }
 
     public void solveBFS(Square[][] maze) {
         makeList(maze);
@@ -21,8 +29,6 @@ public class BFSAlgorithm {
         setEntranceExit(maze);
         Node exit = queue.element();
         boolean solve = false;
-        if (queue.element().isExit)
-            solve = true;
         while (!solve) {
             Node n = queue.remove();
             if (n.isExit) {
@@ -38,30 +44,41 @@ public class BFSAlgorithm {
             solvePath.add(exit);
         }
 
-        for (Node n : solvePath) {
-            System.out.print(n.number + " ");
-            if (!n.isEntrance) {
-                System.out.print("-> ");
+        if (print) {
+            for (Node n : solvePath) {
+                System.out.print(n.number + " ");
+                if (!n.isEntrance) {
+                    System.out.print("-> ");
+                }
             }
+            showNumeration();
         }
     }
 
     private void addToQueue(Node n) {
-        if (n.up != null && n.up != n.creator) {
+        if (n.up != null) {
             queue.add(n.up);
-            n.up.creator = n;
+            if (n.up.creator == null)
+                n.up.creator = n;
+            n.up.down = null;
         }
-        if (n.right != null && n.right != n.creator) {
+        if (n.right != null) {
             queue.add(n.right);
-            n.right.creator = n;
+            if (n.right.creator == null)
+                n.right.creator = n;
+            n.right.left = null;
         }
-        if (n.down != null && n.down != n.creator) {
+        if (n.down != null) {
             queue.add(n.down);
-            n.down.creator = n;
+            if (n.down.creator == null)
+                n.down.creator = n;
+            n.down.up = null;
         }
-        if (n.left != null && n.left != n.creator) {
+        if (n.left != null) {
             queue.add(n.left);
-            n.left.creator = n;
+            if (n.left.creator == null)
+                n.left.creator = n;
+            n.left.right = null;
         }
     }
 
@@ -136,6 +153,17 @@ public class BFSAlgorithm {
                 nodeList.get(((i - 1) / 2) * ((width - 1) / 2) + x).isExit = true;
             }
         }
+    }
+
+    private void showNumeration() {
+        System.out.println("\nNumeracja węzłów w labiryncie:");
+        System.out.println("-------");
+        System.out.println("|1|2|3|");
+        System.out.println("-------");
+        System.out.println("|4|5|6|");
+        System.out.println("-------");
+        System.out.println("|7|8|9|");
+        System.out.println("-------");
     }
 
     private class Node extends Path {

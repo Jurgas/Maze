@@ -19,12 +19,17 @@ public class TremauxAlgorithm {
     private int lastDirection;
     private String fileName;
 
+    public TremauxAlgorithm() {
+    }
+
     public TremauxAlgorithm(String fileName) {
         this.fileName = fileName;
     }
 
     public void solveTremaux(Square[][] m) {
-        copyMaze(m);
+        if (markedMaze == null) {
+            copyMaze(m);
+        }
         makePaths();
         setEntranceExit(markedMaze);
 
@@ -39,7 +44,8 @@ public class TremauxAlgorithm {
         }
         entrance.solvePath = true;
 
-        writeToFile(markedMaze, new File(fileName));
+        if (fileName != null)
+            writeToFile(markedMaze, new File(fileName));
     }
 
     private void choosePath() {
@@ -108,28 +114,28 @@ public class TremauxAlgorithm {
         do {
             curHeight = curHeight - 2;
             position = markedMaze[curWidth][curHeight];
-        } while (((MarkedPath) position).isTunnel);
+        } while (((MarkedPath) position).isTunnel && !((MarkedPath) position).isExit);
     }
 
     private void moveDown() {
         do {
             curHeight = curHeight + 2;
             position = markedMaze[curWidth][curHeight];
-        } while (((MarkedPath) position).isTunnel);
+        } while (((MarkedPath) position).isTunnel && !((MarkedPath) position).isExit);
     }
 
     private void moveLeft() {
         do {
             curWidth = curWidth - 2;
             position = markedMaze[curWidth][curHeight];
-        } while (((MarkedPath) position).isTunnel);
+        } while (((MarkedPath) position).isTunnel && !((MarkedPath) position).isExit);
     }
 
     private void moveRight() {
         do {
             curWidth = curWidth + 2;
             position = markedMaze[curWidth][curHeight];
-        } while (((MarkedPath) position).isTunnel);
+        } while (((MarkedPath) position).isTunnel && !((MarkedPath) position).isExit);
     }
 
     private boolean moveBack() {
@@ -149,22 +155,29 @@ public class TremauxAlgorithm {
     }
 
     private void moveSolve(int direction) {
-        ((MarkedPath) position).solvePath = true;
         switch (direction) {
             case 0:
+                ((MarkedPath) position).way[0]++;
                 setUp();
+                ((MarkedPath) position).way[1]++;
                 lastDirection = 1;
                 break;
             case 1:
+                ((MarkedPath) position).way[1]++;
                 setDown();
+                ((MarkedPath) position).way[0]++;
                 lastDirection = 0;
                 break;
             case 2:
+                ((MarkedPath) position).way[2]++;
                 setLeft();
+                ((MarkedPath) position).way[3]++;
                 lastDirection = 3;
                 break;
             case 3:
+                ((MarkedPath) position).way[3]++;
                 setRight();
+                ((MarkedPath) position).way[2]++;
                 lastDirection = 2;
                 break;
         }
@@ -172,6 +185,7 @@ public class TremauxAlgorithm {
 
     private void setUp() {
         do {
+            ((MarkedPath) position).solvePath = true;
             ((MarkedPath) markedMaze[curWidth][curHeight - 1]).solvePath = true;
             curHeight = curHeight - 2;
             position = markedMaze[curWidth][curHeight];
@@ -180,6 +194,7 @@ public class TremauxAlgorithm {
 
     private void setDown() {
         do {
+            ((MarkedPath) position).solvePath = true;
             ((MarkedPath) markedMaze[curWidth][curHeight + 1]).solvePath = true;
             curHeight = curHeight + 2;
             position = markedMaze[curWidth][curHeight];
@@ -188,6 +203,7 @@ public class TremauxAlgorithm {
 
     private void setLeft() {
         do {
+            ((MarkedPath) position).solvePath = true;
             ((MarkedPath) markedMaze[curWidth - 1][curHeight]).solvePath = true;
             curWidth = curWidth - 2;
             position = markedMaze[curWidth][curHeight];
@@ -196,13 +212,14 @@ public class TremauxAlgorithm {
 
     private void setRight() {
         do {
+            ((MarkedPath) position).solvePath = true;
             ((MarkedPath) markedMaze[curWidth + 1][curHeight]).solvePath = true;
             curWidth = curWidth + 2;
             position = markedMaze[curWidth][curHeight];
         } while (((MarkedPath) position).isTunnel);
     }
 
-    private void copyMaze(Square[][] maze) {
+    public void copyMaze(Square[][] maze) {
         markedMaze = new Square[maze.length][maze[0].length];
         for (int i = 0; i < maze[0].length; i++) {
             for (int j = 0; j < maze.length; j++) {
@@ -226,27 +243,28 @@ public class TremauxAlgorithm {
 
         for (int i = 1; i < height; i = i + 2) {
             for (int j = 1; j < width; j = j + 2) {
-                if (markedMaze[j][i] instanceof MarkedPath) {
-                    if (markedMaze[j][i - 1] instanceof MarkedPath) {
-                        ((MarkedPath) markedMaze[j][i]).way[0] = 0;
-                        verCounter++;
-                    }
-                    if (markedMaze[j][i + 1] instanceof MarkedPath) {
-                        ((MarkedPath) markedMaze[j][i]).way[1] = 0;
-                        verCounter++;
-                    }
-                    if (markedMaze[j - 1][i] instanceof MarkedPath) {
-                        ((MarkedPath) markedMaze[j][i]).way[2] = 0;
-                        horCounter++;
-                    }
-                    if (markedMaze[j + 1][i] instanceof MarkedPath) {
-                        ((MarkedPath) markedMaze[j][i]).way[3] = 0;
-                        horCounter++;
-                    }
-
-                    if ((verCounter == 2 && horCounter == 0) || (verCounter == 0 && horCounter == 2))
-                        ((MarkedPath) markedMaze[j][i]).isTunnel = true;
+                if (markedMaze[j][i - 1] instanceof MarkedPath) {
+                    ((MarkedPath) markedMaze[j][i]).way[0] = 0;
+                    verCounter++;
                 }
+                if (markedMaze[j][i + 1] instanceof MarkedPath) {
+                    ((MarkedPath) markedMaze[j][i]).way[1] = 0;
+                    verCounter++;
+                }
+                if (markedMaze[j - 1][i] instanceof MarkedPath) {
+                    ((MarkedPath) markedMaze[j][i]).way[2] = 0;
+                    horCounter++;
+                }
+                if (markedMaze[j + 1][i] instanceof MarkedPath) {
+                    ((MarkedPath) markedMaze[j][i]).way[3] = 0;
+                    horCounter++;
+                }
+
+                if ((verCounter == 2 && horCounter == 0) || (verCounter == 0 && horCounter == 2))
+                    ((MarkedPath) markedMaze[j][i]).isTunnel = true;
+
+                horCounter = 0;
+                verCounter = 0;
             }
         }
 
@@ -298,7 +316,6 @@ public class TremauxAlgorithm {
             }
 
         entrance.isTunnel = false;
-        entrance.isEntrance = true;
 
     }
 
@@ -307,7 +324,6 @@ public class TremauxAlgorithm {
         boolean solvePath;
         boolean isTunnel;
         boolean isExit;
-        boolean isEntrance;
 
         @Override
         public String toString() {
