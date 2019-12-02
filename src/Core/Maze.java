@@ -29,7 +29,7 @@ public class Maze {
         maze = new Square[width][height];
     }
 
-    public void generateMaze(int width, int height) {
+    public void generateMaze(int width, int height, boolean moreSolutions) {
         generateEmptyMaze(width * 2 + 1, height * 2 + 1);
         for (int i = 0; i < getHeight(); i++) {
             for (int j = 0; j < getWidth(); j++) {
@@ -41,13 +41,16 @@ public class Maze {
         }
 
         makeEntrances(width, height);
-        divide(1, getWidth() - 2, 1, getHeight() - 2);
+        if (!moreSolutions)
+            divide(1, getWidth() - 2, 1, getHeight() - 2);
+        else
+            moreHoleDivide(1, getWidth() - 2, 1, getHeight() - 2, 0);
     }
 
 
     private void divide(int startWidth, int endWidth, int startHeight, int endHeight) {
         Random r;
-        int x, y;
+        int wall, hole;
         boolean z = false;
         int w = (endWidth - startWidth + 2) / 2;
         int h = (endHeight - startHeight + 2) / 2;
@@ -56,21 +59,64 @@ public class Maze {
             if (w == h)
                 z = r.nextBoolean();
             if (w > h || z) {
-                x = r.nextInt(w - 1) * 2 + 2;
-                y = r.nextInt(h) * 2 + 1;
+                wall = r.nextInt(w - 1) * 2 + 2;
+                hole = r.nextInt(h) * 2 + 1;
                 for (int i = startHeight; i <= endHeight; i++)
-                    maze[x + startWidth - 1][i] = new Wall();
-                maze[x + startWidth - 1][y + startHeight - 1] = new Path();
-                divide(startWidth, startWidth - 1 + x - 1, startHeight, endHeight);
-                divide(startWidth - 1 + x + 1, endWidth, startHeight, endHeight);
+                    maze[wall + startWidth - 1][i] = new Wall();
+                maze[wall + startWidth - 1][hole + startHeight - 1] = new Path();
+                divide(startWidth, startWidth - 1 + wall - 1, startHeight, endHeight);
+                divide(startWidth - 1 + wall + 1, endWidth, startHeight, endHeight);
             } else {
-                x = r.nextInt(h - 1) * 2 + 2;
-                y = r.nextInt(w) * 2 + 1;
+                wall = r.nextInt(h - 1) * 2 + 2;
+                hole = r.nextInt(w) * 2 + 1;
                 for (int i = startWidth; i <= endWidth; i++)
-                    maze[i][x + startHeight - 1] = new Wall();
-                maze[y + startWidth - 1][x + startHeight - 1] = new Path();
-                divide(startWidth, endWidth, startHeight, startHeight - 1 + x - 1);
-                divide(startWidth, endWidth, startHeight - 1 + x + 1, endHeight);
+                    maze[i][wall + startHeight - 1] = new Wall();
+                maze[hole + startWidth - 1][wall + startHeight - 1] = new Path();
+                divide(startWidth, endWidth, startHeight, startHeight - 1 + wall - 1);
+                divide(startWidth, endWidth, startHeight - 1 + wall + 1, endHeight);
+            }
+        }
+    }
+
+    private void moreHoleDivide(int startWidth, int endWidth, int startHeight, int endHeight, int counter) {
+        counter++;
+        Random r;
+        int wall, hole, secondHole, thirdHole;
+        boolean z = false;
+        int w = (endWidth - startWidth + 2) / 2;
+        int h = (endHeight - startHeight + 2) / 2;
+        if (w > 1 && h > 1) {
+            r = new Random();
+            if (w == h)
+                z = r.nextBoolean();
+            if (w > h || z) {
+                wall = r.nextInt(w - 1) * 2 + 2;
+                hole = r.nextInt(h) * 2 + 1;
+                for (int i = startHeight; i <= endHeight; i++)
+                    maze[wall + startWidth - 1][i] = new Wall();
+                maze[wall + startWidth - 1][hole + startHeight - 1] = new Path();
+                if (counter <= 3) {
+                    secondHole = r.nextInt(h) * 2 + 1;
+                    maze[wall + startWidth - 1][secondHole + startHeight - 1] = new Path();
+                    thirdHole = r.nextInt(h) * 2 + 1;
+                    maze[wall + startWidth - 1][thirdHole + startHeight - 1] = new Path();
+                }
+                moreHoleDivide(startWidth, startWidth - 1 + wall - 1, startHeight, endHeight, counter);
+                moreHoleDivide(startWidth - 1 + wall + 1, endWidth, startHeight, endHeight, counter);
+            } else {
+                wall = r.nextInt(h - 1) * 2 + 2;
+                hole = r.nextInt(w) * 2 + 1;
+                for (int i = startWidth; i <= endWidth; i++)
+                    maze[i][wall + startHeight - 1] = new Wall();
+                maze[hole + startWidth - 1][wall + startHeight - 1] = new Path();
+                if (counter <= 3) {
+                    secondHole = r.nextInt(w) * 2 + 1;
+                    maze[secondHole + startWidth - 1][wall + startHeight - 1] = new Path();
+                    thirdHole = r.nextInt(w) * 2 + 1;
+                    maze[thirdHole + startWidth - 1][wall + startHeight - 1] = new Path();
+                }
+                moreHoleDivide(startWidth, endWidth, startHeight, startHeight - 1 + wall - 1, counter);
+                moreHoleDivide(startWidth, endWidth, startHeight - 1 + wall + 1, endHeight, counter);
             }
         }
     }

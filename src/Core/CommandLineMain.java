@@ -45,7 +45,12 @@ public class CommandLineMain {
             System.out.println("Wpisz rozmiary labiryntu (szerokość wysokość), który chcesz wygenerować.");
             int w = s.nextInt();
             int h = s.nextInt();
-            m.generateMaze(w, h);
+            System.out.println("Czy chcesz wygenerować labirynt z większą liczbą rozwiązań? (t/n)");
+            String ans = s.next();
+            boolean sol = false;
+            if (ans.equals("t"))
+                sol = true;
+            m.generateMaze(w, h, sol);
             s.close();
         }
 
