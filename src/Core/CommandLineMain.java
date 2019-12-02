@@ -43,13 +43,25 @@ public class CommandLineMain {
         if (!read) {
             Scanner s = new Scanner(System.in);
             System.out.println("Wpisz rozmiary labiryntu (szerokość wysokość), który chcesz wygenerować.");
+            System.out.print("Szerokość: ");
             int w = s.nextInt();
+            System.out.print("Wysokość: ");
             int h = s.nextInt();
             System.out.println("Czy chcesz wygenerować labirynt z większą liczbą rozwiązań? (t/n)");
             String ans = s.next();
             boolean sol = false;
-            if (ans.equals("t"))
-                sol = true;
+            boolean enter = false;
+            do {
+                if (ans.equals("t")) {
+                    sol = true;
+                    enter = true;
+                } else if (ans.equals("n")) {
+                    enter = true;
+                } else
+                    System.out.println("Wpisano zły znaK! Wpisz 't' albo 'n'.");
+            } while (!enter);
+
+
             m.generateMaze(w, h, sol);
             s.close();
         }
@@ -58,7 +70,7 @@ public class CommandLineMain {
         for (int i = 0; i < m.getHeight(); i++) {
             for (int j = 0; j < m.getWidth(); j++)
                 System.out.print(m.getMaze()[j][i]);
-                System.out.println();
+            System.out.println();
         }
 
         System.out.println("\nRozwiązanie algorytmem BFS: ");

@@ -166,6 +166,14 @@ public class BFSAlgorithm {
         System.out.println("-------");
     }
 
+    public void clearQueue() {
+        queue.clear();
+    }
+
+    public void clearNodeList() {
+        nodeList.clear();
+    }
+
     private class Node extends Path {
         Node up;
         Node down;

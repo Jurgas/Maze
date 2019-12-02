@@ -62,7 +62,7 @@ public class TremauxAlgorithm {
         }
 
         if (unseen == 1) {
-            move(unseenPath.get(0));
+            move(unseenPath.get(0), false);
         } else if (unseen > 1) {
             chooseMove(unseenPath);
         } else {
@@ -78,61 +78,77 @@ public class TremauxAlgorithm {
     }
 
     private void chooseMove(List<Integer> l) {
-        move(l.get(new Random().nextInt(l.size())));
+        move(l.get(new Random().nextInt(l.size())), false);
     }
 
-    private void move(int direction) {
+    private void move(int direction, boolean setSolvePath) {
         switch (direction) {
             case 0:
                 ((MarkedPath) position).way[0]++;
-                moveUp();
+                moveUp(setSolvePath);
                 ((MarkedPath) position).way[1]++;
                 lastDirection = 1;
                 break;
             case 1:
                 ((MarkedPath) position).way[1]++;
-                moveDown();
+                moveDown(setSolvePath);
                 ((MarkedPath) position).way[0]++;
                 lastDirection = 0;
                 break;
             case 2:
                 ((MarkedPath) position).way[2]++;
-                moveLeft();
+                moveLeft(setSolvePath);
                 ((MarkedPath) position).way[3]++;
                 lastDirection = 3;
                 break;
             case 3:
                 ((MarkedPath) position).way[3]++;
-                moveRight();
+                moveRight(setSolvePath);
                 ((MarkedPath) position).way[2]++;
                 lastDirection = 2;
                 break;
         }
     }
 
-    private void moveUp() {
+    private void moveUp(boolean setSolvePath) {
         do {
+            if (setSolvePath) {
+                ((MarkedPath) position).solvePath = true;
+                ((MarkedPath) markedMaze[curWidth][curHeight - 1]).solvePath = true;
+            }
             curHeight = curHeight - 2;
             position = markedMaze[curWidth][curHeight];
         } while (((MarkedPath) position).isTunnel && !((MarkedPath) position).isExit);
     }
 
-    private void moveDown() {
+    private void moveDown(boolean setSolvePath) {
         do {
+            if (setSolvePath) {
+                ((MarkedPath) position).solvePath = true;
+                ((MarkedPath) markedMaze[curWidth][curHeight + 1]).solvePath = true;
+            }
             curHeight = curHeight + 2;
             position = markedMaze[curWidth][curHeight];
         } while (((MarkedPath) position).isTunnel && !((MarkedPath) position).isExit);
     }
 
-    private void moveLeft() {
+    private void moveLeft(boolean setSolvePath) {
         do {
+            if (setSolvePath) {
+                ((MarkedPath) position).solvePath = true;
+                ((MarkedPath) markedMaze[curWidth - 1][curHeight]).solvePath = true;
+            }
             curWidth = curWidth - 2;
             position = markedMaze[curWidth][curHeight];
         } while (((MarkedPath) position).isTunnel && !((MarkedPath) position).isExit);
     }
 
-    private void moveRight() {
+    private void moveRight(boolean setSolvePath) {
         do {
+            if (setSolvePath) {
+                ((MarkedPath) position).solvePath = true;
+                ((MarkedPath) markedMaze[curWidth + 1][curHeight]).solvePath = true;
+            }
             curWidth = curWidth + 2;
             position = markedMaze[curWidth][curHeight];
         } while (((MarkedPath) position).isTunnel && !((MarkedPath) position).isExit);
@@ -140,7 +156,7 @@ public class TremauxAlgorithm {
 
     private boolean moveBack() {
         if (((MarkedPath) position).way[lastDirection] != 2) {
-            move(lastDirection);
+            move(lastDirection, false);
             return true;
         }
         return false;
@@ -149,74 +165,9 @@ public class TremauxAlgorithm {
     private void setSolvePath() {
         for (int k = 0; k < 4; k++) {
             if (((MarkedPath) position).way[k] == 1 && k != lastDirection) {
-                moveSolve(k);
+                move(k, true);
             }
         }
-    }
-
-    private void moveSolve(int direction) {
-        switch (direction) {
-            case 0:
-                ((MarkedPath) position).way[0]++;
-                setUp();
-                ((MarkedPath) position).way[1]++;
-                lastDirection = 1;
-                break;
-            case 1:
-                ((MarkedPath) position).way[1]++;
-                setDown();
-                ((MarkedPath) position).way[0]++;
-                lastDirection = 0;
-                break;
-            case 2:
-                ((MarkedPath) position).way[2]++;
-                setLeft();
-                ((MarkedPath) position).way[3]++;
-                lastDirection = 3;
-                break;
-            case 3:
-                ((MarkedPath) position).way[3]++;
-                setRight();
-                ((MarkedPath) position).way[2]++;
-                lastDirection = 2;
-                break;
-        }
-    }
-
-    private void setUp() {
-        do {
-            ((MarkedPath) position).solvePath = true;
-            ((MarkedPath) markedMaze[curWidth][curHeight - 1]).solvePath = true;
-            curHeight = curHeight - 2;
-            position = markedMaze[curWidth][curHeight];
-        } while (((MarkedPath) position).isTunnel);
-    }
-
-    private void setDown() {
-        do {
-            ((MarkedPath) position).solvePath = true;
-            ((MarkedPath) markedMaze[curWidth][curHeight + 1]).solvePath = true;
-            curHeight = curHeight + 2;
-            position = markedMaze[curWidth][curHeight];
-        } while (((MarkedPath) position).isTunnel);
-    }
-
-    private void setLeft() {
-        do {
-            ((MarkedPath) position).solvePath = true;
-            ((MarkedPath) markedMaze[curWidth - 1][curHeight]).solvePath = true;
-            curWidth = curWidth - 2;
-            position = markedMaze[curWidth][curHeight];
-        } while (((MarkedPath) position).isTunnel);
-    }
-
-    private void setRight() {
-        do {
-            ((MarkedPath) position).solvePath = true;
-            ((MarkedPath) markedMaze[curWidth + 1][curHeight]).solvePath = true;
-            curWidth = curWidth + 2;
-            position = markedMaze[curWidth][curHeight];
-        } while (((MarkedPath) position).isTunnel);
     }
 
     public void copyMaze(Square[][] maze) {
