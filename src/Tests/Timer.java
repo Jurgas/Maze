@@ -28,7 +28,7 @@ public class Timer {
 
 
         output.append("BFS Tremaux");
-        for (int i = 10; i <= 50; i = i + 10) {
+        for (int i = 10; i <= 500; i = i + 10) {
             bfs = new BFSAlgorithm();
             tre = new TremauxAlgorithm();
             m.generateMaze(i, i, false);

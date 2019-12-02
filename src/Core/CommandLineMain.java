@@ -58,7 +58,7 @@ public class CommandLineMain {
                 } else if (ans.equals("n")) {
                     enter = true;
                 } else {
-                    System.out.println("Wpisano zły znaK! Wpisz 't' albo 'n'.");
+                    System.out.println("Wpisano zły znak! Wpisz 't' albo 'n'.");
                     ans = s.next();
                 }
             } while (!enter);
